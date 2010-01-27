@@ -16,7 +16,7 @@ tweet_count = 0
 
 my_tweets = api.home_timeline()
 for tweet in my_tweets:
-    tweet_item = (tweet.user.screen_name, tweet.user.name, tweet.text)
+    tweet_item = (tweet.user.screen_name, tweet.user.name, tweet.created_at.strftime("%Y/%d/%m %H:%M:%S"), tweet.text)
     tweetdata.update({tweet_count : tweet_item})
     tweet_count = tweet_count + 1
 
@@ -73,7 +73,7 @@ class TestListCtrlPanel(wx.Panel, listmix.ColumnSorterMixin):
         # Now that the list exists we can init the other base class,
         # see wx/lib/mixins/listctrl.py
         self.itemDataMap = tweetdata
-        listmix.ColumnSorterMixin.__init__(self, 3)
+        listmix.ColumnSorterMixin.__init__(self, 4)
         #self.SortListItems(0, True)
 
         self.SetSizer(sizer)
@@ -116,38 +116,44 @@ class TestListCtrlPanel(wx.Panel, listmix.ColumnSorterMixin):
             info.m_mask = wx.LIST_MASK_TEXT | wx.LIST_MASK_IMAGE | wx.LIST_MASK_FORMAT
             info.m_image = -1
             info.m_format = 0
-            info.m_text = "Artist"
+            info.m_text = "Twitter Name"
             self.list.InsertColumnInfo(0, info)
 
-            info.m_format = wx.LIST_FORMAT_RIGHT
-            info.m_text = "Title"
+            info.m_format = 0
+            info.m_text = "User Name"
             self.list.InsertColumnInfo(1, info)
 
             info.m_format = 0
-            info.m_text = "Genre"
+            info.m_text = "When"
             self.list.InsertColumnInfo(2, info)
+
+            info.m_format = 0
+            info.m_text = "Tweet"
+            self.list.InsertColumnInfo(3, info)
 
         items = tweetdata.items()
         for key, data in items:
             index = self.list.InsertImageStringItem(sys.maxint, data[0], self.idx1)
             self.list.SetStringItem(index, 1, data[1])
             self.list.SetStringItem(index, 2, data[2])
+            self.list.SetStringItem(index, 3, data[3])
             self.list.SetItemData(index, key)
 
         self.list.SetColumnWidth(0, wx.LIST_AUTOSIZE)
         self.list.SetColumnWidth(1, wx.LIST_AUTOSIZE)
-        self.list.SetColumnWidth(2, 100)
+        self.list.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+        self.list.SetColumnWidth(3, wx.LIST_AUTOSIZE)
 
         # show how to select an item
-        self.list.SetItemState(5, wx.LIST_STATE_SELECTED, wx.LIST_STATE_SELECTED)
+#        self.list.SetItemState(5, wx.LIST_STATE_SELECTED, wx.LIST_STATE_SELECTED)
 
         # show how to change the colour of a couple items
-        item = self.list.GetItem(1)
-        item.SetTextColour(wx.BLUE)
-        self.list.SetItem(item)
-        item = self.list.GetItem(4)
-        item.SetTextColour(wx.RED)
-        self.list.SetItem(item)
+#        item = self.list.GetItem(1)
+#        item.SetTextColour(wx.BLUE)
+#        self.list.SetItem(item)
+#        item = self.list.GetItem(4)
+#        item.SetTextColour(wx.RED)
+#        self.list.SetItem(item)
 
         self.currentItem = 0
 
@@ -187,22 +193,12 @@ class TestListCtrlPanel(wx.Panel, listmix.ColumnSorterMixin):
                             self.getColumnText(self.currentItem, 1),
                             self.getColumnText(self.currentItem, 2)))
 
-        if self.currentItem == 10:
-            self.log.WriteText("OnItemSelected: Veto'd selection\n")
-            #event.Veto()  # doesn't work
-            # this does
-            self.list.SetItemState(10, 0, wx.LIST_STATE_SELECTED)
-
         event.Skip()
 
 
     def OnItemDeselected(self, evt):
         item = evt.GetItem()
         self.log.WriteText("OnItemDeselected: %d" % evt.m_itemIndex)
-
-        # Show how to reselect something we don't want deselected
-        if evt.m_itemIndex == 11:
-            wx.CallAfter(self.list.SetItemState, 11, wx.LIST_STATE_SELECTED, wx.LIST_STATE_SELECTED)
 
 
     def OnItemActivated(self, event):
