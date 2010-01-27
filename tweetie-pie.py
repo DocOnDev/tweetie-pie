@@ -14,7 +14,7 @@ api = tweepy.API(auth)
 tweetdata = {}
 tweet_count = 0
 
-my_tweets = api.home_timeline()
+my_tweets = api.home_timeline(count=50)
 for tweet in my_tweets:
     tweet_item = (tweet.user.screen_name, tweet.user.name, tweet.created_at.strftime("%Y/%d/%m %H:%M:%S"), tweet.text)
     tweetdata.update({tweet_count : tweet_item})
@@ -55,12 +55,12 @@ class TestListCtrlPanel(wx.Panel, listmix.ColumnSorterMixin):
 
         self.list = TestListCtrl(self, tID,
                                  style=wx.LC_REPORT 
-                                 #| wx.BORDER_SUNKEN
-                                 | wx.BORDER_NONE
+                                 | wx.BORDER_SUNKEN
+                                 #| wx.BORDER_NONE
                                  | wx.LC_EDIT_LABELS
                                  | wx.LC_SORT_ASCENDING
                                  #| wx.LC_NO_HEADER
-                                 #| wx.LC_VRULES
+                                 | wx.LC_VRULES
                                  #| wx.LC_HRULES
                                  #| wx.LC_SINGLE_SEL
                                  )
@@ -144,17 +144,6 @@ class TestListCtrlPanel(wx.Panel, listmix.ColumnSorterMixin):
         self.list.SetColumnWidth(2, wx.LIST_AUTOSIZE)
         self.list.SetColumnWidth(3, wx.LIST_AUTOSIZE)
 
-        # show how to select an item
-#        self.list.SetItemState(5, wx.LIST_STATE_SELECTED, wx.LIST_STATE_SELECTED)
-
-        # show how to change the colour of a couple items
-#        item = self.list.GetItem(1)
-#        item.SetTextColour(wx.BLUE)
-#        self.list.SetItem(item)
-#        item = self.list.GetItem(4)
-#        item.SetTextColour(wx.RED)
-#        self.list.SetItem(item)
-
         self.currentItem = 0
 
 
@@ -225,9 +214,6 @@ class TestListCtrlPanel(wx.Panel, listmix.ColumnSorterMixin):
 
     def OnColBeginDrag(self, event):
         self.log.WriteText("OnColBeginDrag\n")
-        ## Show how to not allow a column to be resized
-        #if event.GetColumn() == 0:
-        #    event.Veto()
 
 
     def OnColDragging(self, event):
