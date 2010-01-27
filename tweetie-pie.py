@@ -6,7 +6,7 @@ import tweepy
 import wx.lib.mixins.listctrl  as  listmix
 import images
 
-auth = tweepy.BasicAuthHandler("DocOnDev", "AgileD3v")
+auth = tweepy.BasicAuthHandler("DocOnDev", "xxxxxxxxxxxxxxxxxxx")
 api = tweepy.API(auth)
 
 # api.update_status("Sending this tweet from my text-based python twitter client.")
